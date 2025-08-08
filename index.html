@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Персональный осознанный дневник</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">🌱</span>
+        <h1>Осознанный дневник человечности</h1>
+      </div>
+      <div class="header-actions">
+        <button id="settingsBtn" class="ghost-btn" title="Настройки">⚙️</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel input-panel">
+        <div class="question-row">
+          <label for="datePicker" class="date-label">День</label>
+          <div class="date-nav">
+            <button id="prevDayBtn" class="ghost-btn" title="Предыдущий день">‹</button>
+            <input type="date" id="datePicker" />
+            <button id="nextDayBtn" class="ghost-btn" title="Следующий день">›</button>
+            <button id="todayBtn" class="ghost-btn" title="Сегодня">Сегодня</button>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <div class="question-text" id="questionText">Что я понял(а) о жизни сегодня?</div>
+          <div class="question-variants">
+            <button id="shuffleQuestionBtn" class="ghost-btn" title="Случайный вопрос">🎲</button>
+          </div>
+        </div>
+
+        <div class="editor">
+          <label for="entryText">Моя мысль</label>
+          <textarea id="entryText" placeholder="Напишите здесь..." rows="10"></textarea>
+        </div>
+
+        <div class="tags">
+          <label for="tagsInput">Ключевые слова (через запятую, опционально)</label>
+          <input id="tagsInput" type="text" placeholder="например: благодарность, осознанность" />
+        </div>
+
+        <div class="actions">
+          <button id="saveBtn" class="primary-btn">Сохранить</button>
+          <span id="saveStatus" class="save-status" aria-live="polite"></span>
+        </div>
+
+        <div class="export-area">
+          <button id="exportJsonBtn" class="ghost-btn">Экспорт JSON</button>
+          <button id="exportMdBtn" class="ghost-btn">Экспорт Markdown</button>
+        </div>
+      </section>
+
+      <section class="panel viz-panel">
+        <div class="viz-block">
+          <div class="viz-header">
+            <h2>Лента памяти</h2>
+            <div class="viz-controls">
+              <label>
+                Период
+                <select id="ribbonRange">
+                  <option value="30">30 дн.</option>
+                  <option value="60">60 дн.</option>
+                  <option value="90" selected>90 дн.</option>
+                  <option value="180">180 дн.</option>
+                  <option value="365">365 дн.</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div id="memoryRibbon" class="memory-ribbon" aria-label="Лента памяти" tabindex="0"></div>
+        </div>
+
+        <div class="viz-block">
+          <div class="viz-header">
+            <h2>Дерево смыслов</h2>
+            <div class="viz-controls">
+              <label>
+                Порог связи
+                <input id="treeThreshold" type="range" min="1" max="5" step="1" value="2" />
+              </label>
+            </div>
+          </div>
+          <svg id="meaningTree" class="meaning-tree" viewBox="0 0 800 500" role="img" aria-label="Дерево смыслов"></svg>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="settingsModal" class="modal">
+      <form method="dialog" class="modal-content">
+        <header class="modal-header">
+          <h3>Настройки</h3>
+        </header>
+        <section class="modal-body settings">
+          <fieldset>
+            <legend>Приватность</legend>
+            <label class="row">
+              <input type="checkbox" id="enableEncryptionChk" /> Включить локальное шифрование (пароль)
+            </label>
+            <div id="encryptionFields" class="hidden">
+              <label class="row">
+                Пароль
+                <input type="password" id="encryptionPass" autocomplete="new-password" />
+              </label>
+              <label class="row">
+                Подтверждение
+                <input type="password" id="encryptionPass2" autocomplete="new-password" />
+              </label>
+              <p class="hint">Пароль не восстанавливается. Без него расшифровать записи будет невозможно.</p>
+              <button id="applyEncryptionBtn" class="primary-btn" type="button">Применить</button>
+            </div>
+            <div id="encryptionManage" class="hidden">
+              <p class="hint">Шифрование включено.</p>
+              <button id="lockNowBtn" class="ghost-btn" type="button">Заблокировать сейчас</button>
+              <button id="disableEncryptionBtn" class="ghost-btn danger" type="button">Отключить шифрование</button>
+            </div>
+          </fieldset>
+        </section>
+        <footer class="modal-footer">
+          <button value="cancel" class="ghost-btn">Закрыть</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="unlockModal" class="modal">
+      <form method="dialog" class="modal-content" id="unlockForm">
+        <header class="modal-header">
+          <h3>Разблокировать записи</h3>
+        </header>
+        <section class="modal-body">
+          <label class="row">
+            Пароль
+            <input type="password" id="unlockPass" autocomplete="current-password" required />
+          </label>
+          <p id="unlockError" class="error hidden">Неверный пароль. Попробуйте снова.</p>
+        </section>
+        <footer class="modal-footer">
+          <button value="cancel" class="ghost-btn">Отмена</button>
+          <button id="unlockBtn" class="primary-btn" value="default">Разблокировать</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
