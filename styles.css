@@ -194,3 +194,35 @@ input[type="date"], input[type="text"], input[type="password"], select {
 @media (max-width: 1024px) {
   .layout { grid-template-columns: 1fr; }
 }
+
+/* Responsive enhancements */
+.brand h1 { font-size: clamp(14px, 2.6vw, 18px); }
+.question-text { font-size: clamp(16px, 3.4vw, 20px); }
+
+@media (max-width: 1024px) {
+  .panel { padding: 12px; }
+  .meaning-tree { height: 420px; }
+}
+
+@media (max-width: 768px) {
+  .layout { padding: 12px; gap: 12px; }
+  .input-panel .question-row { grid-template-columns: 1fr; }
+  .date-nav { flex-wrap: wrap; gap: 6px; }
+  .date-nav input[type="date"] { flex: 1 1 100%; width: 100%; order: 2; }
+  .date-nav button, .export-area button { flex: 1; }
+  .actions { flex-wrap: wrap; }
+  .memory-ribbon { min-height: 56px; grid-auto-columns: 16px; }
+  .meaning-tree { height: 360px; }
+  .node-label { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .layout { padding: 10px; }
+  button, input[type="date"], input[type="text"], input[type="password"], select { height: 40px; }
+  #entryText { min-height: 200px; }
+  .viz-header h2 { font-size: 13px; }
+  .export-area { flex-wrap: wrap; }
+  .settings .row { grid-template-columns: 1fr; }
+  .ribbon-item { height: 22px; border-radius: 5px; }
+  .modal-content { width: calc(100vw - 16px); }
+}
